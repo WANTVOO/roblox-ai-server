@@ -7,6 +7,12 @@ app.get("/", (req, res) => {
   res.send("Server is running!");
 });
 
+// Browser-friendly test (GET)
+app.get("/npc-chat", (req, res) => {
+  res.status(200).send("npc-chat route is live (use POST to chat)");
+});
+
+// Roblox/PowerShell will use this (POST)
 app.post("/npc-chat", (req, res) => {
   const userText = (req.body?.userText ?? "").toString();
   res.json({ reply: "NPC heard: " + userText });
