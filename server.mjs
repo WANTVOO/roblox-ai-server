@@ -3,23 +3,28 @@ import express from "express";
 const app = express();
 app.use(express.json());
 
-// Root
+// Log every request so we can debug what Render is actually receiving
+app.use((req, res, next) => {
+  console.log("REQ:", req.method, req.url);
+  next();
+});
+
 app.get("/", (req, res) => {
-  res.send("Server is running!");
+  res.status(200).send("Server is running!");
 });
 
-// Browser test
+// GET for browser testing
 app.get(["/npc-chat", "/npc-chat/"], (req, res) => {
-  res.status(200).send("npc-chat route is live (POST to chat)");
+  res.status(200).send("npc-chat route is live. Try POST with JSON {userText}");
 });
 
-// REAL endpoint (POST)
+// POST endpoint (this is what Roblox/PowerShell uses)
 app.post(["/npc-chat", "/npc-chat/"], (req, res) => {
   const userText = (req.body?.userText ?? "").toString();
   res.status(200).json({ reply: "NPC heard: " + userText });
 });
 
-// Helpful debug: show unmatched routes
+// Catch-all so 404 responses are informative
 app.all("*", (req, res) => {
   res.status(404).send(`Not found: ${req.method} ${req.path}`);
 });
