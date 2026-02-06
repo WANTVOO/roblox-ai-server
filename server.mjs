@@ -3,23 +3,26 @@ import express from "express";
 const app = express();
 app.use(express.json());
 
-// Root
 app.get("/", (req, res) => {
   res.status(200).send("Server is running!");
 });
 
-// TEMP: accept ANY method on /npc-chat so POST can't 404
-app.all(["/npc-chat", "/npc-chat/"], (req, res) => {
-  const body = req.body || {};
-  const userText = (body.userText ?? "").toString();
-
+// ✅ GET chat (easy to test in a browser)
+// Example: /npc-chat-get?userText=hello
+app.get("/npc-chat-get", (req, res) => {
+  const userText = (req.query.userText ?? "").toString();
   res.status(200).json({
     ok: true,
-    method: req.method,
-    path: req.path,
+    method: "GET",
     userText,
     reply: "NPC heard: " + userText
   });
+});
+
+// ✅ POST chat (Roblox can still use this later)
+app.post(["/npc-chat", "/npc-chat/"], (req, res) => {
+  const userText = (req.body?.userText ?? "").toString();
+  res.status(200).json({ reply: "NPC heard: " + userText });
 });
 
 // Catch-all
@@ -28,8 +31,7 @@ app.all("*", (req, res) => {
 });
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, "0.0.0.0", () => {
-  console.log("Listening on port " + PORT);
-});
+app.listen(PORT, "0.0.0.0", () => console.log("Listening on port " + PORT));
+
 
 
