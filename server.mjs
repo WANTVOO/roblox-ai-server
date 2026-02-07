@@ -12,6 +12,7 @@ app.get(["/npc-chat", "/npc-chat/"], (req, res) => {
   const userText = (req.query.userText ?? req.query.usertext ?? "").toString();
   res.status(200).json({
     ok: true,
+    version: "v3",
     method: "GET",
     userText,
     reply: "NPC heard: " + userText
@@ -38,4 +39,5 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, "0.0.0.0", () => {
   console.log("Listening on port " + PORT);
 });
+
 
